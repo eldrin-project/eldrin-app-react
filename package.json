@@ -1,7 +1,7 @@
 {
   "name": "@eldrin-project/eldrin-app-react",
-  "version": "0.0.1",
-  "description": "React adapter for Eldrin apps - provides single-spa lifecycle and database hooks",
+  "version": "0.0.2",
+  "description": "React adapter for Eldrin apps providing single-spa lifecycle and database hooks",
   "publishConfig": {
     "access": "public"
   },
@@ -43,10 +43,16 @@
   "license": "MIT",
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
-    "react-dom": "^18.0.0 || ^19.0.0"
+    "react-dom": "^18.0.0 || ^19.0.0",
+    "single-spa-react": "^6.0.0 || ^7.0.0"
+  },
+  "peerDependenciesMeta": {
+    "single-spa-react": {
+      "optional": true
+    }
   },
   "dependencies": {
-    "@eldrin-project/eldrin-app-core": "^0.0.3"
+    "@eldrin-project/eldrin-app-core": "^0.0.5"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20251216.0",
@@ -58,6 +64,7 @@
     "globals": "^16.5.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "single-spa-react": "^6.0.2",
     "tsup": "^8.0.0",
     "typescript": "^5.8.0",
     "typescript-eslint": "^8.50.1",

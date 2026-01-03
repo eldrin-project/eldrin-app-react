@@ -1,19 +1,44 @@
 /**
- * Types for @eldrin-project/app-react
+ * Types for @eldrin-project/eldrin-app-react
  */
 
-import type { ComponentType, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import type { MigrationFile, MigrationResult } from '@eldrin-project/eldrin-app-core';
 
 /**
- * Options for createApp factory
+ * Global Eldrin context exposed by the shell
+ */
+export interface EldrinGlobal {
+  getAuthHeaders?: () => Record<string, string>;
+  user?: {
+    id: string;
+    email: string;
+    name?: string;
+  };
+}
+
+/**
+ * Props passed by single-spa during lifecycle
+ */
+export interface LifecycleProps {
+  name: string;
+  singleSpa: unknown;
+  mountParcel: unknown;
+  db?: D1Database;
+  manifest?: {
+    baseUrl?: string;
+    [key: string]: unknown;
+  };
+  [key: string]: unknown;
+}
+
+/**
+ * Options for creating an Eldrin React app
  */
 export interface CreateAppOptions {
-  /** Unique app identifier */
+  /** App name (must match single-spa registration) */
   name: string;
-  /** Root React component */
-  root: ComponentType<unknown>;
-  /** Migration files (loaded at build time via Vite plugin) */
+  /** Migration files to run on bootstrap */
   migrations?: MigrationFile[];
   /** Called when migrations complete successfully */
   onMigrationsComplete?: (result: MigrationResult) => void;
@@ -22,50 +47,40 @@ export interface CreateAppOptions {
 }
 
 /**
- * Single-spa lifecycle props passed to lifecycle functions
+ * Single-spa lifecycle function type
  */
-export interface LifecycleProps {
-  /** DOM element to mount the app into */
-  domElement?: HTMLElement;
-  /** App name */
-  name?: string;
-  /** D1 Database instance (provided by shell) */
-  db?: D1Database;
-  /** Custom props from shell */
-  customProps?: Record<string, unknown>;
+export type LifecycleFn<T = LifecycleProps> = (props: T) => Promise<void>;
+
+/**
+ * Single-spa lifecycle functions
+ */
+export interface AppLifecycle<T = LifecycleProps> {
+  bootstrap: LifecycleFn<T> | LifecycleFn<T>[];
+  mount: LifecycleFn<T> | LifecycleFn<T>[];
+  unmount: LifecycleFn<T> | LifecycleFn<T>[];
 }
 
 /**
- * Single-spa compatible lifecycle object
- */
-export interface AppLifecycle {
-  bootstrap: (props: LifecycleProps) => Promise<void>;
-  mount: (props: LifecycleProps) => Promise<void>;
-  unmount: (props: LifecycleProps) => Promise<void>;
-}
-
-/**
- * Database context passed to app components
+ * Database context for components
  */
 export interface DatabaseContext {
-  /** D1 database instance (null if app has no database) */
   db: D1Database | null;
-  /** Whether migrations have completed */
   migrationsComplete: boolean;
-  /** Migration result (if migrations were run) */
-  migrationResult?: MigrationResult;
+  migrationResult: MigrationResult | null;
+}
+
+/**
+ * Internal app state
+ */
+export interface AppState {
+  db: D1Database | null;
+  migrationsComplete: boolean;
+  migrationResult: MigrationResult | null;
 }
 
 /**
  * Props for DatabaseProvider
  */
 export interface DatabaseProviderProps {
-  /** D1 database instance (null if app has no database) */
-  db: D1Database | null;
-  /** Whether migrations have completed */
-  migrationsComplete: boolean;
-  /** Migration result */
-  migrationResult?: MigrationResult;
-  /** Child components */
   children: ReactNode;
 }
